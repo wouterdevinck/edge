@@ -1,0 +1,29 @@
+# Documentation: https://raw.githubusercontent.com/Azure/iotedge/1.0.9.4/edgelet/contrib/config/linux/config.yaml
+
+provisioning:
+  source: "manual"
+  device_connection_string: "HostName=xxx;DeviceId=yyy;SharedAccessKey=zzz"
+
+agent:
+  name: "edgeAgent"
+  type: "docker"
+  env:
+    UpstreamProtocol: "Mqtt"
+  config:
+    image: "mcr.microsoft.com/azureiotedge-agent:1.0"
+    auth: {}
+
+hostname: "edgeos"
+
+connect:
+  management_uri: "unix:///var/lib/iotedge/mgmt.sock"
+  workload_uri: "unix:///var/lib/iotedge/workload.sock"
+
+listen:
+  management_uri: "unix:///var/lib/iotedge/mgmt.sock"
+  workload_uri: "unix:///var/lib/iotedge/workload.sock"
+
+homedir: "/var/lib/iotedge"
+
+moby_runtime:
+  uri: "unix:///var/run/docker.sock"

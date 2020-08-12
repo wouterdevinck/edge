@@ -1,0 +1,34 @@
+#!/bin/sh
+
+NAME=iotedged
+DAEMON=/usr/bin/$NAME
+PIDFILE=/var/run/$NAME.pid
+DAEMON_ARGS="-c /etc/iotedge/config.yaml"
+
+# TODO Move this to the iotedge.mk?
+mkdir -p /var/lib/iotedge
+mkdir -p /var/log/iotedge # TODO Use this directory
+touch /var/lib/iotedge/mgmt.sock
+touch /var/lib/iotedge/workload.sock
+chmod 660 /var/lib/iotedge/mgmt.sock
+chmod 666 /var/lib/iotedge/workload.sock
+
+case "$1" in
+	start)
+		printf "Starting iotedged: "
+		start-stop-daemon --start --quiet --background --make-pidfile \
+			--pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS \
+			&& echo "OK" || echo "FAIL"
+		;;
+	stop)
+		printf "Stopping iotedged: "
+		start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+			&& echo "OK" || echo "FAIL"
+		echo "done"
+		;;
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+esac
+
+exit $?

@@ -1,0 +1,12 @@
+diff --git a/edgelet/hsm-sys/build.rs b/edgelet/hsm-sys/build.rs
+index 9eaf766b..b24a9f27 100644
+--- a/edgelet/hsm-sys/build.rs
++++ b/edgelet/hsm-sys/build.rs
+@@ -148,6 +148,7 @@ fn build_libiothsm() {
+         .set_build_shared()
+         .set_test_defines()
+         .profile("Release")
++        .cflag("-Wno-format-nonliteral")
+         .build();
+
+     println!("#Done building HSM dev-mode library");
