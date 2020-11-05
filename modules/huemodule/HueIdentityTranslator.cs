@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data.Common;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using iotedgeapiclient;
 using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
 
 namespace huemodule {
@@ -14,22 +12,23 @@ namespace huemodule {
         private readonly string _hueToken;
 
         private readonly EdgeClient _edge;
+        private readonly HueRepository _hue;
 
         public HueIdentityTranslator(string hueToken, EdgeClient edge) {
             _hueToken = hueToken;
             _edge = edge;
+            _hue = new HueRepository();
         }
 
         public async Task ConnectAsync() {
             var moduleClient = await _edge.CreateModuleClientAsync();
             await moduleClient.OpenAsync();
             await moduleClient.SetMethodHandlerAsync("DeviceRegistered", DeviceRegistered, moduleClient);
-            var hue = new HueRepository();
-            hue.DeviceDiscovered += async device => {
+            _hue.DeviceDiscovered += async device => {
                 await RegisterLeafDevice(moduleClient, device.IotDeviceId);
                 device.DeviceUpdate += update => Console.WriteLine($"Device {device.IotDeviceId} updated {update}");
             };
-            await hue.ConnectAsync(_hueToken);
+            await _hue.ConnectAsync(_hueToken);
         }
 
         private async Task RegisterLeafDevice(ModuleClient moduleClient, string id) {
@@ -45,19 +44,53 @@ namespace huemodule {
         }
 
         private async Task<MethodResponse> DeviceRegistered(MethodRequest methodRequest, object userContext) {
-            if (!(userContext is ModuleClient moduleClient)) {
+            if (!(userContext is ModuleClient)) {
                 throw new InvalidOperationException("UserContext doesn't contain expected values");
             }
             var methodResponse = new MethodResponse(200);
             var response = JsonConvert.DeserializeObject<RegistrationResponse>(methodRequest.DataAsJson);
             var leafDeviceId = response.LeafDeviceId;
             Console.WriteLine($"Leaf device '{leafDeviceId}' registered with IoTHub");
+            await ConnectDeviceAsync(leafDeviceId);
+            return methodResponse;
+        }
+
+        private async Task ConnectDeviceAsync(string leafDeviceId) { 
+            var device = _hue.GetDeviceById(leafDeviceId);
             var dc = await _edge.CreateDeviceClientAsync(leafDeviceId);
             dc.SetConnectionStatusChangesHandler((status, reason) => {
                 Console.WriteLine($"Device connection status for {leafDeviceId} changed to {status}, because of {reason}.");
             });
+            await dc.SetMethodHandlerAsync("on", async (req, ctx) => {
+                await device.TurnOn();
+                return new MethodResponse(200);
+            }, null);
+            await dc.SetMethodHandlerAsync("off", async (req, ctx) => {
+                await device.TurnOff();
+                return new MethodResponse(200);
+            }, null);
+            var reportedProperties = new TwinCollection {
+                ["name"] = device.Name
+            };
+            await dc.UpdateReportedPropertiesAsync(reportedProperties);
+            await dc.SetDesiredPropertyUpdateCallbackAsync(async (desired, ctx) => {
+                var targetName = desired["name"].ToString();
+                await device.SetName(targetName);
+
+                var reported = new TwinCollection {
+                    ["name"] = new TwinCollection {
+                        ["value"] = device.Name,
+                        ["ac"] = 200,
+                        ["av"] = desired.Version,
+                        ["ad"] = "desired property received"
+                    }
+                };
+                await dc.UpdateReportedPropertiesAsync(reported);
+            }, null);
+            device.DeviceUpdate += s => {
+                // TODO
+            };
             await dc.OpenAsync();
-            return methodResponse;
         }
 
     }

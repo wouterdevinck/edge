@@ -91,7 +91,9 @@ namespace huemodule {
             // limited update info?
         }
 
-        public HueDevice(Sensor sensor) {
+        public HueDevice(Sensor sensor, HueClient hue) {
+            _hue = hue;
+            _localId = sensor.Id;
             Type = HueDeviceType.Sensor;
             _uniqueId = sensor.UniqueId;
             Name = sensor.Name;
@@ -105,7 +107,8 @@ namespace huemodule {
             // no update info?
         }
 
-        public HueDevice(Bridge bridge) {
+        public HueDevice(Bridge bridge, HueClient hue) {
+            _hue = hue;
             Type = HueDeviceType.Bridge;
             _uniqueId = bridge.Config.BridgeId;
             Name = bridge.Config.Name;
@@ -138,6 +141,22 @@ namespace huemodule {
             if (!HasTemperature) throw new NotSupportedException();
             var command = new LightCommand { ColorTemperature = ct };
             await _hue.SendCommandAsync(command, new List<string> { _localId });
+        }
+
+        public async Task SetName(string name) {
+            if (Type == HueDeviceType.Sensor) {
+                await _hue.UpdateSensorAsync(_localId, name);
+            }
+            if (Type == HueDeviceType.Light || Type == HueDeviceType.Plug) {
+                await _hue.SetLightNameAsync(_localId, name);
+            }
+            if (Type == HueDeviceType.Bridge) {
+                await _hue.UpdateBridgeConfigAsync(new BridgeConfigUpdate {
+                    Name = name
+                });
+            }
+            // TODO Check if success? E.g. name too short 
+            Name = name;
         }
 
         public void Update(HueDevice other) {

@@ -101,15 +101,19 @@ namespace huemodule {
             var lights = await _hue.GetLightsAsync();
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             var sensors = (await _hue.GetSensorsAsync()).Where(x => x.Capabilities != null);
-            devices.Add(new HueDevice(bridge));
+            devices.Add(new HueDevice(bridge, _hue));
             devices.AddRange(lights.Select(x => new HueDevice(x, _hue)));
-            devices.AddRange(sensors.Select(x => new HueDevice(x)));
+            devices.AddRange(sensors.Select(x => new HueDevice(x, _hue)));
             // var config = await _hue.GetConfigAsync();
             return devices;
         }
 
-        public HueDevice GetDeviceByName(string name) {
-            return _devices.Single(x => x.Name == name);
+        // public HueDevice GetDeviceByName(string name) {
+        //    return _devices.Single(x => x.Name == name);
+        // }
+
+        public HueDevice GetDeviceById(string id) {
+            return _devices.Single(x => x.IotDeviceId == id);
         }
 
         public void FastUpdate() {

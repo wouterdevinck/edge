@@ -8,7 +8,7 @@ namespace huemodule {
     internal class Program {
 
         // TODO Make this configurable as environment variables
-        private const string HueToken = "xxxx";
+        private const string HueToken = "pp4f0lQ1dLTt7Ce-MvBpAtwJpmIlpHL3bCAiWyJv";
 
         static void Main() {
 

@@ -10,6 +10,8 @@ namespace huemodule {
 
     internal class EdgeClient {
 
+        private const string ModelId = "dtmi:wouterdevinck:light;1"; // TODO Not everything is a light - split up models?
+
         private readonly ITransportSettings[] _transportSettings;
 
         private readonly string _sasToken;
@@ -82,7 +84,7 @@ namespace huemodule {
         public async Task<DeviceClient> CreateDeviceClientAsync(string leafDeviceId) {
             var key = await SignAsync(leafDeviceId);
             IAuthenticationMethod authMethod = new DeviceAuthenticationWithRegistrySymmetricKey(leafDeviceId, key);
-            return DeviceClient.Create(_iotHubHostName, _gatewayHostName, authMethod, _transportSettings);
+            return DeviceClient.Create(_iotHubHostName, _gatewayHostName, authMethod, _transportSettings, new ClientOptions { ModelId = ModelId });
         }
 
         private async Task<string> SignAsync(string payload) {

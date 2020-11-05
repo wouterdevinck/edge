@@ -1,0 +1,23 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:wouterdevinck:light;1",
+  "@type": "Interface",
+  "displayName": "Light",
+  "contents": [
+    {
+      "@type": "Command",
+      "name": "on"
+    },
+    {
+      "@type": "Command",
+      "name": "off"
+    },
+    {
+      "@type": "Property",
+      "name": "name",
+      "writable": true,
+      "schema": "string"
+    }
+  ]
+}
+
