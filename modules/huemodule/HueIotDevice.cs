@@ -28,7 +28,8 @@ namespace huemodule {
                 return new MethodResponse(200);
             }, null);
             var reportedProperties = new TwinCollection {
-                ["name"] = _hue.Name
+                ["name"] = _hue.Name,
+                ["version"] = _hue.Version
             };
             await _iot.UpdateReportedPropertiesAsync(reportedProperties);
             await _iot.SetDesiredPropertyUpdateCallbackAsync(async (desired, ctx) => {

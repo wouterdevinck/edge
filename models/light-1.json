@@ -17,6 +17,12 @@
       "name": "name",
       "writable": true,
       "schema": "string"
+    },
+    {
+      "@type": "Property",
+      "name": "version",
+      "writable": false,
+      "schema": "string"
     }
   ]
 }
