@@ -27,15 +27,10 @@ namespace huemodule {
                 await _hue.TurnOff();
                 return new MethodResponse(200);
             }, null);
-            var reportedProperties = new TwinCollection {
-                ["name"] = _hue.Name,
-                ["version"] = _hue.Version
-            };
-            await _iot.UpdateReportedPropertiesAsync(reportedProperties);
+            await UpdateReportedState();
             await _iot.SetDesiredPropertyUpdateCallbackAsync(async (desired, ctx) => {
                 var targetName = desired["name"].ToString();
                 await _hue.SetName(targetName);
-
                 var reported = new TwinCollection {
                     ["name"] = new TwinCollection {
                         ["value"] = _hue.Name,
@@ -46,10 +41,26 @@ namespace huemodule {
                 };
                 await _iot.UpdateReportedPropertiesAsync(reported);
             }, null);
-            _hue.DeviceUpdate += s => {
-                // TODO
+            _hue.DeviceUpdate += async _ => {
+                await UpdateReportedState();
             };
             await _iot.OpenAsync();
+        }
+
+        private async Task UpdateReportedState(){
+            var reportedProperties = new TwinCollection {
+                ["name"] = _hue.Name,
+                ["manufacturer"] = _hue.Manufacturer,
+                ["model"] = _hue.Model,
+                ["version"] = _hue.Version,
+                ["reachable"] = _hue.Reachable,
+                ["on"] = _hue.On,
+                ["brightness"] = _hue.Brightness,
+                ["colorTemperature"] = _hue.ColorTemperature,
+                ["battery"] = _hue.Battery,
+                ["buttonEvent"] = _hue.ButtonEvent
+            };
+            await _iot.UpdateReportedPropertiesAsync(reportedProperties);
         }
 
     }

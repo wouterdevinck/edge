@@ -20,9 +20,57 @@
     },
     {
       "@type": "Property",
+      "name": "manufacturer",
+      "writable": false,
+      "schema": "string"
+    },
+    {
+      "@type": "Property",
+      "name": "model",
+      "writable": false,
+      "schema": "string"
+    },
+    {
+      "@type": "Property",
       "name": "version",
       "writable": false,
       "schema": "string"
+    },
+    {
+      "@type": "Property",
+      "name": "reachable",
+      "writable": false,
+      "schema": "boolean"
+    },
+    {
+      "@type": "Property",
+      "name": "on",
+      "writable": false,
+      "schema": "boolean"
+    },
+    {
+      "@type": "Property",
+      "name": "brightness",
+      "writable": false,
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "colorTemperature",
+      "writable": false,
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "battery",
+      "writable": false,
+      "schema": "integer"
+    },
+    {
+      "@type": "Property",
+      "name": "buttonEvent",
+      "writable": false,
+      "schema": "integer"
     }
   ]
 }
