@@ -162,53 +162,53 @@ namespace huemodule {
         public void Update(HueDevice other) {
             if (_uniqueId != other._uniqueId) throw new Exception("Unique ID mismatch!");
             if (Type != other.Type) {
-                DeviceUpdate?.Invoke("Type");
                 Type = other.Type;
+                DeviceUpdate?.Invoke("Type");
             }
             if (Name != other.Name) {
-                DeviceUpdate?.Invoke("Name");
                 Name = other.Name;
+                DeviceUpdate?.Invoke("Name");
             }
             if (Manufacturer != other.Manufacturer) {
-                DeviceUpdate?.Invoke("Manufacturer");
                 Manufacturer = other.Manufacturer;
+                DeviceUpdate?.Invoke("Manufacturer");
             }
             if (Model != other.Model) {
-                DeviceUpdate?.Invoke("Model");
                 Model = other.Model;
+                DeviceUpdate?.Invoke("Model");
             }
             if (Version != other.Version) {
-                DeviceUpdate?.Invoke("Version");
                 Version = other.Version;
+                DeviceUpdate?.Invoke("Version");
             }
             if (Reachable != other.Reachable) {
-                DeviceUpdate?.Invoke("Reachable");
                 Reachable = other.Reachable;
+                DeviceUpdate?.Invoke("Reachable");
             }
             if (Battery != other.Battery) {
-                DeviceUpdate?.Invoke("Battery");
                 Battery = other.Battery;
+                DeviceUpdate?.Invoke("Battery");
             }
             if (On != other.On) {
-                DeviceUpdate?.Invoke("On");
                 On = other.On;
+                DeviceUpdate?.Invoke("On");
             }
             if (Brightness != other.Brightness) {
-                DeviceUpdate?.Invoke("Brightness");
                 Brightness = other.Brightness;
+                DeviceUpdate?.Invoke("Brightness");
             }
             if (ColorTemperature != other.ColorTemperature) {
-                DeviceUpdate?.Invoke("ColorTemperature");
                 ColorTemperature = other.ColorTemperature;
+                DeviceUpdate?.Invoke("ColorTemperature");
             }
             if (ButtonEvent != other.ButtonEvent) {
-                DeviceUpdate?.Invoke("ButtonEvent");
                 // Console.WriteLine($"from {ButtonEvent} to {other.ButtonEvent}");
                 ButtonEvent = other.ButtonEvent;
+                DeviceUpdate?.Invoke("ButtonEvent");
             }
             if (SensorUpdate != other.SensorUpdate) {
-                DeviceUpdate?.Invoke("SensorUpdate");
                 SensorUpdate = other.SensorUpdate;
+                DeviceUpdate?.Invoke("SensorUpdate");
             }
         }
 
