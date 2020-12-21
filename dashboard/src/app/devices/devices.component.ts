@@ -16,18 +16,17 @@ export class DevicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDevices();
+    this.api.subscribeTwinUpdates().subscribe(device => {
+      this.devices.filter(x => x.deviceId == device.deviceId)[0].twin = device.twin;
+    });
   }
 
   getDevices(): void {
-    this.api.getDevices()
-      .subscribe(devices => this.devices = devices);
+    this.api.getDevices().subscribe(devices => this.devices = devices);
   }
 
   sendCommand(deviceId: string, command: string): void {
     this.api.sendDeviceCommand(deviceId, command);
-    setTimeout(() => {
-      this.getDevices(); // TEMP hack to refresh status
-    }, 3000)
   }
 
 }

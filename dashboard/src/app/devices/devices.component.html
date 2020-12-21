@@ -1,7 +1,7 @@
 <ul>
   <li *ngFor="let device of devices">
-    <span [class.green]="device.connected && device.twin.reachable">{{ device.twin.name }}</span> - 
-    <a *ngIf="!device.twin.on" href="#" (click)="$event.preventDefault();sendCommand(device.deviceId, 'on')">on</a>
-    <a *ngIf="device.twin.on" href="#" (click)="$event.preventDefault();sendCommand(device.deviceId, 'off')">off</a>
+    <span [class.green]="device.connected && device.twin.reachable">{{ device.twin.name }}</span>&nbsp;
+    <a *ngIf="!device.twin.on && device.connected && device.twin.reachable" href="#" (click)="$event.preventDefault();sendCommand(device.deviceId, 'on')">on</a>
+    <a *ngIf="device.twin.on && device.connected && device.twin.reachable" href="#" (click)="$event.preventDefault();sendCommand(device.deviceId, 'off')">off</a>
   </li>
 </ul>
