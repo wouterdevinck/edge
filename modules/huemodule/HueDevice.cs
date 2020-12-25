@@ -122,25 +122,42 @@ namespace huemodule {
         public async Task TurnOn() {
             if (!HasOnOff) throw new NotSupportedException();
             var command = new LightCommand { On = true };
-            await _hue.SendCommandAsync(command, new List<string> { _localId });
+            var result = await _hue.SendCommandAsync(command, new List<string> { _localId });
+            if (result[0].Error == null) {
+                On = true;
+                DeviceUpdate?.Invoke("On");
+            }
+            // TODO Return result?
         }
 
         public async Task TurnOff() {
             if (!HasOnOff) throw new NotSupportedException();
             var command = new LightCommand { On = false };
-            await _hue.SendCommandAsync(command, new List<string> { _localId });
+            var result = await _hue.SendCommandAsync(command, new List<string> { _localId });
+            if (result[0].Error == null) {
+                On = false;
+                DeviceUpdate?.Invoke("On");
+            };
         }
 
         public async Task SetBrightness(byte bri) {
             if (!HasBrightness) throw new NotSupportedException();
             var command = new LightCommand { Brightness = bri };
-            await _hue.SendCommandAsync(command, new List<string> { _localId });
+            var result = await _hue.SendCommandAsync(command, new List<string> { _localId });
+            if (result[0].Error == null) {
+                Brightness = bri;
+                DeviceUpdate?.Invoke("Brightness");
+            }
         }
 
         public async Task SetTemperature(int ct) {
             if (!HasTemperature) throw new NotSupportedException();
             var command = new LightCommand { ColorTemperature = ct };
-            await _hue.SendCommandAsync(command, new List<string> { _localId });
+            var result = await _hue.SendCommandAsync(command, new List<string> { _localId });
+            if (result[0].Error == null) {
+                ColorTemperature = ct;
+                DeviceUpdate?.Invoke("ColorTemperature");
+            }
         }
 
         public async Task SetName(string name) {
@@ -157,6 +174,7 @@ namespace huemodule {
             }
             // TODO Check if success? E.g. name too short 
             Name = name;
+            DeviceUpdate?.Invoke("Name");
         }
 
         public void Update(HueDevice other) {
